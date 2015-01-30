@@ -16,6 +16,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var deleteByIdTextField: UITextField!
     @IBOutlet var deleteByTagsTextField: UITextField!
 
+
     @IBOutlet var tableView: UITableView!
     
     var documents : NSMutableArray = []
@@ -26,26 +27,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view, typically from a nib.
         tableView.delegate = self;
         tableView.dataSource = self;
+        
+        
     }
     
     override func viewDidAppear(animated: Bool) {
-        SDANetworkManager.sharedInstance().getAllDocuments({ (data, response, error) -> Void in
-            var httpResponse : NSHTTPURLResponse =  response as NSHTTPURLResponse;
-            var statusCode = httpResponse.statusCode;
-            if(statusCode == 200){
-                DocumentXMLParser.sharedInstance().parseData(data, onComplete: { (array, error) -> Void in
-                    if(error == nil){
-                        self.documents = array
-                        dispatch_async(dispatch_get_main_queue(), {
-                            self.tableView.reloadData();
-                        })
-                    }
-                })
-            }else{
-                
-            }
-            
-        })
+        getAllDocuments();
     }
 
     override func didReceiveMemoryWarning() {
@@ -86,7 +73,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             if(statusCode == 200){
                 DocumentXMLParser.sharedInstance().parseData(data, onComplete: { (array, error) -> Void in
                     if(error == nil){
-                        self.documents = array
+                        if(array.count == 0) {
+                            var alert : UIAlertView = UIAlertView(title: "No Documentss", message: "No documents found.", delegate: nil, cancelButtonTitle: "OK")
+                            dispatch_async(dispatch_get_main_queue(), {
+                                alert.show()
+                            })
+                        }
+                        self.documents = array;
                         dispatch_async(dispatch_get_main_queue(), {
                             self.tableView.reloadData();
                         })
@@ -103,7 +96,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     @IBAction func deleteById(sender: AnyObject) {
-        SDANetworkManager.sharedInstance().deleteDocumentWithId(searchByIdTextField.text, completionHandler:  { (data, response, error) -> Void in
+        SDANetworkManager.sharedInstance().deleteDocumentWithId(deleteByIdTextField.text, completionHandler:  { (data, response, error) -> Void in
             var httpResponse : NSHTTPURLResponse =  response as NSHTTPURLResponse;
             var statusCode = httpResponse.statusCode;
             if(statusCode == 200){
@@ -148,7 +141,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell : UITableViewCell = tableView.dequeueReusableCellWithIdentifier("documentCell", forIndexPath: indexPath) as UITableViewCell
         var doc = documents.objectAtIndex(indexPath.row) as Document
-        cell.textLabel?.text = doc.name
+        cell.textLabel.text = doc.name
         return cell
     }
     
@@ -168,7 +161,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    func getAllDocuments() {
+        SDANetworkManager.sharedInstance().getAllDocuments({ (data, response, error) -> Void in
+            var httpResponse : NSHTTPURLResponse =  response as NSHTTPURLResponse;
+            var statusCode = httpResponse.statusCode;
+            if(statusCode == 200){
+                DocumentXMLParser.sharedInstance().parseData(data, onComplete: { (array, error) -> Void in
+                    if(error == nil){
+                        self.documents = array
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.tableView.reloadData();
+                        })
+                    }
+                })
+            }else{
+                
+            }
+            
+        })
+    }
     
 
+    @IBAction func getAllDocumentsHandler(sender: AnyObject) {
+        getAllDocuments();
+    }
 }
 

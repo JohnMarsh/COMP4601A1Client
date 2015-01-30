@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CreateDocumentViewController: UIViewController {
+class CreateDocumentViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var textTextField: UITextView!
@@ -36,6 +36,9 @@ class CreateDocumentViewController: UIViewController {
             }
             linksTextField.text =  linkString.substringToIndex(linkString.length-1)
         }
+        
+        nameTextField.delegate = self;
+        tagsTextField.delegate = self;
         
     }
 
@@ -84,5 +87,11 @@ class CreateDocumentViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+        textField.resignFirstResponder()
+        return true;
+    }
+    
 
 }
