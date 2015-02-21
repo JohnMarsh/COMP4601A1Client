@@ -141,7 +141,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell : UITableViewCell = tableView.dequeueReusableCellWithIdentifier("documentCell", forIndexPath: indexPath) as UITableViewCell
         var doc = documents.objectAtIndex(indexPath.row) as Document
-        cell.textLabel.text = doc.name
+        cell.textLabel?.text = doc.name
         return cell
     }
     

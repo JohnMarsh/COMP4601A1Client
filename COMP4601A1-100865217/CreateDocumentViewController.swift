@@ -30,11 +30,15 @@ class CreateDocumentViewController: UIViewController, UITextFieldDelegate {
             for tag in document!.tags {
                 tagString.appendString("\(tag),")
             }
-            tagsTextField.text =  tagString.substringToIndex(tagString.length-1)
+            if(tagString.length > 0){
+                tagsTextField.text =  tagString.substringToIndex(tagString.length-1)
+            }
             for link in document!.links{
                  linkString.appendString("\(link),")
             }
-            linksTextField.text =  linkString.substringToIndex(linkString.length-1)
+            if(linkString.length > 0){
+                linksTextField.text =  linkString.substringToIndex(linkString.length-1)
+            }
         }
         
         nameTextField.delegate = self;
